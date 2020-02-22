@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.util.List;
 
@@ -19,24 +20,28 @@ public class ClientEntity implements Serializable {
     @ApiModelProperty(notes = "The database generated client ID")
     private Long id;
 
+    @Size(max = 50)
     @Basic(optional = false)
     @NotNull
     @Column(name = "name")
     @ApiModelProperty(notes = "The client name")
     private String name;
 
+    @Size(max = 100)
     @Basic(optional = false)
     @NotNull
     @Column(name = "address")
     @ApiModelProperty(notes = "The client address")
     private String address;
 
+    @Size(max = 30)
     @Basic(optional = false)
     @NotNull
     @Column(name = "city")
     @ApiModelProperty(notes = "The client city")
     private String city;
 
+    @Size(max = 20)
     @Basic(optional = false)
     @NotNull
     @Column(name = "phone")

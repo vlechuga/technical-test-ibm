@@ -33,6 +33,6 @@ CREATE TABLE audit (
   id bigint  PRIMARY KEY,
   creation_date timestamp without time zone NOT NULL,
   description VARCHAR(100) NOT NULL,
-  amount DECIMAL(20, 2) NOT NULL,
+  amount DECIMAL(10, 2) NOT NULL,
   card_id bigint REFERENCES card(card_id) ON DELETE CASCADE ON UPDATE CASCADE,
 );

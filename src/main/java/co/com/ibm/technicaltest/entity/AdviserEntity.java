@@ -2,6 +2,7 @@ package co.com.ibm.technicaltest.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Entity
@@ -13,11 +14,13 @@ public class AdviserEntity implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @Size(max = 50)
     @Basic(optional = false)
     @NotNull
     @Column(name = "name")
     private String name;
 
+    @Size(max = 50)
     @Basic(optional = false)
     @NotNull
     @Column(name = "specialty")

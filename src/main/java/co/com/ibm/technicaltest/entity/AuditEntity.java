@@ -2,6 +2,7 @@ package co.com.ibm.technicaltest.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -15,6 +16,7 @@ public class AuditEntity implements Serializable {
     @Column(name = "id")
     private Long id;
 
+    @Size(max = 100)
     @Basic(optional = false)
     @NotNull
     @Column(name = "description")
