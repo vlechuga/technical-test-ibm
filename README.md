@@ -2,7 +2,15 @@
 
 Technical test
 
+
 ## Docker
+
+In the project's root:
+
+Create file target/technical-test.jar
+
+``mvn install
+``
 
 Build image: 
 ``docker build -f Dockerfile -t technical-test .
@@ -18,4 +26,3 @@ Run image:
 ``http://localhost:8080/swagger-ui.html``
 
 ## Testing
-
