@@ -5,6 +5,7 @@ import co.com.ibm.technicaltest.dto.Audit;
 import co.com.ibm.technicaltest.dto.AuditRequest;
 import co.com.ibm.technicaltest.dto.Client;
 import co.com.ibm.technicaltest.dto.CreditCard;
+import co.com.ibm.technicaltest.exception.ConstraintException;
 import co.com.ibm.technicaltest.exception.NotFoundException;
 import co.com.ibm.technicaltest.service.impl.AuditService;
 import co.com.ibm.technicaltest.service.impl.ClientService;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/audit")
+@RequestMapping("/audits")
 @Api(value="Audit Management System", description="Operations pertaining to Audit")
 public class AuditController {
 
@@ -65,12 +66,12 @@ public class AuditController {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 412, message = "Precondition Failed")
     })
-    public ResponseEntity<Audit> createCreditCard(AuditRequest auditRequest) throws NotFoundException {
+    public ResponseEntity<Audit> createCreditCard(@RequestBody AuditRequest auditRequest) throws NotFoundException {
 
         Client client = clientService.getClientById(auditRequest.getClientId());
         CreditCard creditCard = creditCardService.getCreditCardByNumber(auditRequest.getCardNumber());
 
-        if(creditCard.getClient().getId() != auditRequest.getClientId()) {
+        if(!creditCard.getClient().getId().equals(auditRequest.getClientId())) {
             return new ResponseEntity<Audit>(null, new HttpHeaders(), HttpStatus.PRECONDITION_FAILED);
         }
 
@@ -87,9 +88,10 @@ public class AuditController {
     @ApiOperation(value = "Delete a Audit by ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully"),
-            @ApiResponse(code = 404, message = "Not Found")
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 412, message = "Precondition Failed")
     })
-    public HttpStatus deleteAuditById(@PathVariable("id") Long id) throws NotFoundException {
+    public HttpStatus deleteAuditById(@PathVariable("id") Long id) throws NotFoundException, ConstraintException {
         auditService.deleteAuditById(id);
         return HttpStatus.OK;
     }

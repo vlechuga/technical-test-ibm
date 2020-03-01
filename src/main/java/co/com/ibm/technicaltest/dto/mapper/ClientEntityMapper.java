@@ -3,6 +3,10 @@ package co.com.ibm.technicaltest.dto.mapper;
 import co.com.ibm.technicaltest.dto.Client;
 import co.com.ibm.technicaltest.entity.ClientEntity;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
 public class ClientEntityMapper {
 
     public static Client toClientDto(ClientEntity jpa) {
@@ -12,6 +16,11 @@ public class ClientEntityMapper {
         c.setAddress(jpa.getAddress());
         c.setCity(jpa.getCity());
         c.setPhone(jpa.getPhone());
+
+        if(Objects.nonNull(jpa.getCards())) {
+            final List list = jpa.getCards().stream().map(item -> CreditCardEntityMapper.toShortCreditCardDto(item)).collect(Collectors.toList());
+            c.setCards(list);
+        }
         return c;
     }
 

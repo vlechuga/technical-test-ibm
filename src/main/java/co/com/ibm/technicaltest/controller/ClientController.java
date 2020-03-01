@@ -2,6 +2,7 @@ package co.com.ibm.technicaltest.controller;
 
 
 import co.com.ibm.technicaltest.dto.Client;
+import co.com.ibm.technicaltest.exception.ConstraintException;
 import co.com.ibm.technicaltest.exception.NotFoundException;
 import co.com.ibm.technicaltest.service.impl.ClientService;
 import io.swagger.annotations.Api;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/clients")
@@ -48,12 +50,24 @@ public class ClientController {
     }
 
     @PostMapping
-    @ApiOperation(value = "Create or Edit a Client", response = Client.class)
+    @ApiOperation(value = "Create a Client", response = Client.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully"),
             @ApiResponse(code = 404, message = "Not Found")
     })
-    public ResponseEntity<Client> createOrUpdateClient(Client client) {
+    public ResponseEntity<Client> createOrUpdateClient(@RequestBody Client client) {
+        Client updated = clientService.createOrUpdateClient(client);
+        return new ResponseEntity<Client>(updated, new HttpHeaders(), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    @ApiOperation(value = "Edit a Client", response = Client.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
+    public ResponseEntity<Client> createOrUpdateClient(@PathVariable("id") Long id, @RequestBody Client client) {
+        client.setId(id);
         Client updated = clientService.createOrUpdateClient(client);
         return new ResponseEntity<Client>(updated, new HttpHeaders(), HttpStatus.OK);
     }
@@ -62,9 +76,10 @@ public class ClientController {
     @ApiOperation(value = "Delete a Client by ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully"),
-            @ApiResponse(code = 404, message = "Not Found")
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 412, message = "Precondition Failed")
     })
-    public HttpStatus deleteClientById(@PathVariable("id") Long id) throws NotFoundException {
+    public HttpStatus deleteClientById(@PathVariable("id") Long id) throws NotFoundException, ConstraintException {
         clientService.deleteClientById(id);
         return HttpStatus.OK;
     }

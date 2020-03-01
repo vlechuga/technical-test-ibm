@@ -3,6 +3,7 @@ package co.com.ibm.technicaltest.controller;
 
 import co.com.ibm.technicaltest.dto.Adviser;
 import co.com.ibm.technicaltest.dto.Client;
+import co.com.ibm.technicaltest.exception.ConstraintException;
 import co.com.ibm.technicaltest.exception.NotFoundException;
 import co.com.ibm.technicaltest.service.impl.AdviserService;
 import co.com.ibm.technicaltest.service.impl.ClientService;
@@ -31,7 +32,7 @@ public class AdviserController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved list")
     })
-    public ResponseEntity<List<Adviser>> getAllEmployees() {
+    public ResponseEntity<List<Adviser>> getAllAdvisers() {
         List<Adviser> list = adviserService.getAllAdvisers();
 
         return new ResponseEntity<List<Adviser>>(list, new HttpHeaders(), HttpStatus.OK);
@@ -50,12 +51,24 @@ public class AdviserController {
     }
 
     @PostMapping
-    @ApiOperation(value = "Create or Edit a Adviser", response = Adviser.class)
+    @ApiOperation(value = "Create a Adviser", response = Adviser.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully"),
             @ApiResponse(code = 404, message = "Not Found")
     })
-    public ResponseEntity<Adviser> createOrUpdateAdviser(Adviser adviser) {
+    public ResponseEntity<Adviser> createAdviser(@RequestBody Adviser adviser) {
+        Adviser updated = adviserService.createOrUpdateAdviser(adviser);
+        return new ResponseEntity<Adviser>(updated, new HttpHeaders(), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    @ApiOperation(value = "Edit a Adviser", response = Client.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
+    public ResponseEntity<Adviser> updateAdviser(@PathVariable("id") Long id, @RequestBody Adviser adviser) {
+        adviser.setId(id);
         Adviser updated = adviserService.createOrUpdateAdviser(adviser);
         return new ResponseEntity<Adviser>(updated, new HttpHeaders(), HttpStatus.OK);
     }
@@ -64,9 +77,10 @@ public class AdviserController {
     @ApiOperation(value = "Delete a Adviser by ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully"),
-            @ApiResponse(code = 404, message = "Not Found")
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 412, message = "Precondition Failed")
     })
-    public HttpStatus deleteAdviserById(@PathVariable("id") Long id) throws NotFoundException {
+    public HttpStatus deleteAdviserById(@PathVariable("id") Long id) throws NotFoundException, ConstraintException {
         adviserService.deleteAdviserById(id);
         return HttpStatus.OK;
     }

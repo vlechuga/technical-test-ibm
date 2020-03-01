@@ -3,8 +3,8 @@ package co.com.ibm.technicaltest.controller;
 
 import co.com.ibm.technicaltest.dto.Client;
 import co.com.ibm.technicaltest.dto.CreditCard;
+import co.com.ibm.technicaltest.exception.ConstraintException;
 import co.com.ibm.technicaltest.exception.NotFoundException;
-import co.com.ibm.technicaltest.service.impl.ClientService;
 import co.com.ibm.technicaltest.service.impl.CreditCardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -50,12 +50,24 @@ public class CreditCardController {
     }
 
     @PostMapping
-    @ApiOperation(value = "Create or Edit a CreditCard", response = Client.class)
+    @ApiOperation(value = "Create a CreditCard", response = Client.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully"),
             @ApiResponse(code = 404, message = "Not Found")
     })
-    public ResponseEntity<CreditCard> createOrUpdateCreditCard(CreditCard creditCard) {
+    public ResponseEntity<CreditCard> createOrUpdateCreditCard(@RequestBody CreditCard creditCard) {
+        CreditCard updated = creditCardService.createOrUpdateCreditCard(creditCard);
+        return new ResponseEntity<CreditCard>(updated, new HttpHeaders(), HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    @ApiOperation(value = "Edit a CreditCard", response = Client.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully"),
+            @ApiResponse(code = 404, message = "Not Found")
+    })
+    public ResponseEntity<CreditCard> updateCreditCard(@PathVariable("id") Long id, @RequestBody CreditCard creditCard) {
+        creditCard.setId(id);
         CreditCard updated = creditCardService.createOrUpdateCreditCard(creditCard);
         return new ResponseEntity<CreditCard>(updated, new HttpHeaders(), HttpStatus.OK);
     }
@@ -64,9 +76,10 @@ public class CreditCardController {
     @ApiOperation(value = "Delete a CreditCard by ID")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully"),
-            @ApiResponse(code = 404, message = "Not Found")
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 412, message = "Precondition Failed")
     })
-    public HttpStatus deleteClientById(@PathVariable("id") Long id) throws NotFoundException {
+    public HttpStatus deleteClientById(@PathVariable("id") Long id) throws NotFoundException, ConstraintException {
         creditCardService.deleteCreditCardById(id);
         return HttpStatus.OK;
     }

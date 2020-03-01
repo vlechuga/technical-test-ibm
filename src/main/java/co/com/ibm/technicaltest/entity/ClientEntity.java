@@ -94,4 +94,11 @@ public class ClientEntity implements Serializable {
         this.phone = phone;
     }
 
+    public List<CreditCardEntity> getCards() {
+        return cards;
+    }
+
+    public void setCards(List<CreditCardEntity> cards) {
+        this.cards = cards;
+    }
 }

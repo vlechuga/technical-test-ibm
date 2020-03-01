@@ -3,20 +3,27 @@ package co.com.ibm.technicaltest.service.impl;
 
 import co.com.ibm.technicaltest.dto.Client;
 import co.com.ibm.technicaltest.dto.mapper.ClientEntityMapper;
+import co.com.ibm.technicaltest.exception.ConstraintException;
 import co.com.ibm.technicaltest.exception.NotFoundException;
 import co.com.ibm.technicaltest.repository.ClientRepository;
 import co.com.ibm.technicaltest.entity.ClientEntity;
 import co.com.ibm.technicaltest.service.IClientService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class ClientService implements IClientService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ClientService.class);
 
     @Autowired
     private ClientRepository repository;
@@ -45,7 +52,9 @@ public class ClientService implements IClientService {
 
     @Override
     public Client createOrUpdateClient(Client entity) {
-        Optional<ClientEntity> client = repository.findById(entity.getId());
+        Optional<ClientEntity> client = Optional.empty();
+        if(Objects.nonNull(entity.getId()))
+            client = repository.findById(entity.getId());
 
         if(client.isPresent()) {
             ClientEntity newEntity = client.get();
@@ -63,11 +72,16 @@ public class ClientService implements IClientService {
     }
 
     @Override
-    public void deleteClientById(Long id) throws NotFoundException {
+    public void deleteClientById(Long id) throws NotFoundException, ConstraintException {
         Optional<ClientEntity> client = repository.findById(id);
 
         if(client.isPresent()) {
+            try {
             repository.deleteById(id);
+            } catch (DataIntegrityViolationException e) {
+                logger.error("deleteClientById", e);
+                throw new ConstraintException(e.toString());
+            }
         } else {
             throw new NotFoundException("No found client");
         }

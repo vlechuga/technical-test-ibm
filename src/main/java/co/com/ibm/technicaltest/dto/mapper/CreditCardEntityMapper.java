@@ -14,6 +14,14 @@ public class CreditCardEntityMapper {
         return a;
     }
 
+    public static CreditCard toShortCreditCardDto(CreditCardEntity jpa) {
+        CreditCard a = new CreditCard();
+        a.setId(jpa.getId());
+        a.setNumber(jpa.getNumber());
+        a.setType(jpa.getType());
+        return a;
+    }
+
     public static CreditCardEntity toCreditCardJpa(CreditCard cc) {
         CreditCardEntity jpa = new CreditCardEntity();
         jpa.setId(cc.getId());
